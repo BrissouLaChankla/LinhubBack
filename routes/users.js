@@ -4,6 +4,7 @@ const { checkBody } = require("../modules/checkBody");
 const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 const User = require("../models/users");
+const General = require("../models/generals");
 
 /* GET users listing. */
 router.post("/signup", (req, res) => {
@@ -28,6 +29,10 @@ router.post("/signup", (req, res) => {
       });
 
       newUser.save().then((newData) => {
+        const newGeneral = new General({
+          user: newData._id,
+        });
+        newGeneral.save();
         res.json({
           result: true,
           email: newData.email,
