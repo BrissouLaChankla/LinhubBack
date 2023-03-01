@@ -5,6 +5,8 @@ const uid2 = require("uid2");
 const bcrypt = require("bcrypt");
 const User = require("../models/users");
 const General = require("../models/generals");
+const Education = require("../models/educations");
+const Project = require("../models/projects");
 
 /* GET users listing. */
 router.post("/signup", (req, res) => {
@@ -77,6 +79,56 @@ router.post("/signin", (req, res) => {
         erreur: "Email non valide ou mot de pass éroné",
       });
     }
+  });
+});
+
+router.delete("/delete/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      const userId = data._id;
+      console.log(data);
+      General.deleteOne({ user: userId }).then((data) => {
+        if (data.deletedCount >= 0) {
+          Education.deleteMany({ user: userId }).then((data) => {
+            if (data.deletedCount >= 0) {
+              Project.deleteMany({ user: userId }).then((data) => {
+                if (data.deletedCount >= 0) {
+                  User.deleteOne({ _id: userId }).then((data) => {
+                    if (data.deletedCount > 0) {
+                      res.json({ result: true, res: "User deleted" });
+                    } else {
+                      res.json({
+                        result: false,
+                        error: "an error was occured 4",
+                      });
+                    }
+                  });
+                } else {
+                  res.json({ result: false, error: "an error was occured 3" });
+                }
+              });
+            } else {
+              res.json({ result: false, error: "an error was accured 2" });
+            }
+          });
+        } else {
+          res.json({ result: false, error: "an error was accured 1" });
+        }
+      });
+    } else {
+      res.json({ result: false, error: "No user found" });
+    }
+    // Education.deleteMany({ user: userId });
+    // Project.deleteMany({ user: userId });
+    // User.deleteOne({ token: req.params.token }).then((data) => {
+    //   console.log(typeof data.deletedCount);
+    //   if (data.deletedCount > 0) {
+    //     res.json({ result: true, text: "User deleted" });
+    //   } else {
+    //     res.json({ result: false, error: "an error was accured" });
+    //   }
+    // });
+    // }data.deletedCount = '1'
   });
 });
 
