@@ -2,20 +2,16 @@ const mongoose = require("mongoose");
 
 const generalSchema = mongoose.Schema({
   general: {
-    birthDate: Date,
-    adress: String,
+    birthday: Date,
+    firstname:String,
+    lastname:String,
+    address: String,
     description: String,
     headline: String,
-    yearExperience: Date,
+    yearExperience: Number,
     currentJob: String,
-    profilePicture: {
-      data: Buffer,
-      contentType: String,
-    },
-    backgroundPicture: {
-      data: Buffer,
-      contentType: String,
-    },
+    profilePicture:String,
+    backgroundPicture:String,
     urlLinkedIn: String,
   },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
