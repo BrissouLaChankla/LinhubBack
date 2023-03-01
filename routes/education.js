@@ -40,6 +40,7 @@ router.post("/create/:token", (req, res) => {
         fieldOfStudyName: req.body.fieldOfStudyName,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
+        obtainedResult: req.body.result,
         activitiesAndAssociations: req.body.activitiesAndAssociations,
         description: req.body.description,
         user: id,
