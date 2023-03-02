@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 require("./models/connection");
 
 var express = require("express");
@@ -11,6 +11,8 @@ var usersRouter = require("./routes/users");
 var generalInfoRouter = require("./routes/generalInfo");
 var educationRouter = require("./routes/education");
 var projectRouter = require("./routes/projects");
+var languageRouter = require("./routes/languages");
+var positionRouter = require("./routes/positions");
 
 var app = express();
 const cors = require("cors");
@@ -26,5 +28,7 @@ app.use("/users", usersRouter);
 app.use("/generalInfo", generalInfoRouter);
 app.use("/education", educationRouter);
 app.use("/projects", projectRouter);
+app.use("/languages", languageRouter);
+app.use("/positions", positionRouter);
 
 module.exports = app;
