@@ -11,8 +11,7 @@ router.get("/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
       console.log(data._id);
-      Education.find({ user: data._id })
-        // .populate("user")
+      Education.find({ user: data._id }, '_id schoolName degreeName')
         .then((data) => {
           console.log(data);
           res.json({
@@ -25,6 +24,25 @@ router.get("/:token", (req, res) => {
     }
   });
 });
+
+// get a single formation detailled
+router.get("/:formationID/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      Education.findOne({ user: data._id, _id : req.params.formationID })
+        .then((data) => {
+          console.log(data);
+          res.json({
+            result: true,
+            data: data,
+          });
+        });
+    } else {
+      res.json({ error: "An error occured" });
+    }
+  });
+})
+
 
 /*cette route permet de créer une formation. Elle doit elle aussi contenir en params le token de l'utilisateur ,
 ensuite on utilisera ce token pour rechercher l'utilisateur dans la bdd, si il est trouvé, on viendra créer un nouveau 
