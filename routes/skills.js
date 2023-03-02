@@ -1,13 +1,13 @@
 var express = require("express");
 var router = express.Router();
-const Position = require("../models/positions");
 const User = require("../models/users");
+const Skill = require("../models/skills");
 
 router.get("/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
       console.log(data._id);
-      Position.find({ user: data._id })
+      Skill.find({ user: data._id })
         // .populate("user")
         .then((data) => {
           console.log(data);
@@ -27,19 +27,13 @@ router.post("/create/:token", (req, res) => {
     if (data !== null) {
       console.log(data);
       const id = data._id;
-      const newPosition = new Position({
-        company: req.body.company,
-        description: req.body.description,
-        location: req.body.location,
-        locationString: req.body.locationString,
-        title: req.body.title,
-        startMonthYear: req.body.startMonthYear,
-        endMonthYear: req.body.endMonthYear,
-        typeOfContract: req.body.typeOfContract,
+      const newSkill = new Skill({
+        name: req.body.name,
+        proficiency: req.body.profenciency,
         user: id,
       });
 
-      newPosition.save().then((newData) => {
+      newSkill.save().then((newData) => {
         res.json({ result: true, data: newData });
       });
     } else {
@@ -48,11 +42,11 @@ router.post("/create/:token", (req, res) => {
   });
 });
 
-router.delete("/delete/:positionId", (req, res) => {
-  Position.deleteOne({ _id: req.params.positionId }).then((data) => {
+router.delete("/delete/:skillId", (req, res) => {
+  Skill.deleteOne({ _id: req.params.skillId }).then((data) => {
     console.log(typeof data.deletedCount);
     if (data.deletedCount > 0) {
-      res.json({ result: true, text: "Position deleted" });
+      res.json({ result: true, text: "skill deleted" });
     } else {
       res.json({ result: false, error: "an error was accured" });
     }

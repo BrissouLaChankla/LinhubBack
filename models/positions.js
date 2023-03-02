@@ -8,6 +8,7 @@ const positionSchema = mongoose.Schema({
   title: String,
   startMonthYear: Date,
   EndMonthYear: Date,
+  typeOfContract: String,
   user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
 });
 
