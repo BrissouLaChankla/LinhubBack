@@ -32,7 +32,7 @@ router.post("/signup", (req, res) => {
 
       newUser.save().then((newData) => {
         const newGeneral = new General({
-          user: newData._id,
+          user: newData._id
         });
         newGeneral.save();
         res.json({

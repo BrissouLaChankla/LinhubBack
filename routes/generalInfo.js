@@ -67,14 +67,14 @@ router.post("/update/:token", upload.array('profileBannerPictures', 2), async (r
     urls.push(newPath);
   }
   
-  let productImages = urls.map( url => url.res );
+  const productImages = urls.map( url => url.res );
   const sentData = JSON.parse(req.body.data)
   
   //permet de créer/éditer les infos generales de l'utilisateur
   //On cherche d'abord le user avec son token pour récuperer son id
   //puis on modifie via updateOne le document General associé au user id
   User.findOne({ token: req.params.token }).then((data) => {
-    
+    console.log(productImages);
     if (data !== null) {
       General.updateOne(
         { user: data._id },
@@ -86,10 +86,10 @@ router.post("/update/:token", upload.array('profileBannerPictures', 2), async (r
             address: sentData.address,
             description: sentData.description,
             headline: sentData.headline,
-            yearExperience: sentData.yearExperience,
+            experience: sentData.experience,
             // currentJob: sentData.currentJob,
-            profilePicture: productImages[0],
-            backgroundPicture: productImages[1],
+            profilePicture: productImages[1],
+            bannerPicture: productImages[0],
             // urlLinkedIn: sentData.urlLinkedIn,
           },
         }
