@@ -2,43 +2,41 @@ var express = require("express");
 var router = express.Router();
 const General = require("../models/generals");
 const User = require("../models/users");
-const multer = require('multer');
+const multer = require("multer");
+const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/')
+    cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname)
-  }
-})
-const upload = multer({storage: storage})
-const cloudinary = require('cloudinary').v2;
-
+    cb(null, Date.now() + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
+const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 //chercher grâce au params(token) le user avec un User.findOne({ token: req.params.token })
 //utiliser le user id pour chercher le document dans général
 //afficher général
 
-
 // Asynchrone function to upload file to cloudinary then retrieve URL
-const cloudinaryImageUploadMethod = async file => {
-  return new Promise(resolve => {
+const cloudinaryImageUploadMethod = async (file) => {
+  return new Promise((resolve) => {
     cloudinary.uploader.upload(file, (err, res) => {
-      if (err) return res.status(500).send("upload image error")
+      if (err) return res.status(500).send("upload image error");
       resolve({
-        res: res.secure_url
-      })
-    }
-    )
-  })
-}
+        res: res.secure_url,
+      });
+    });
+  });
+};
 
 router.get("/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
@@ -57,43 +55,50 @@ router.get("/:token", (req, res) => {
   });
 });
 
-router.post("/update/:token", upload.array('profileBannerPictures', 2), async (req, res) => {
-  
-  const urls = [];
-  const files = req.files;
-  for (const file of files) {
-    const { path } = file;
-    const newPath = await cloudinaryImageUploadMethod(path);
-    urls.push(newPath);
+const cpUpload = upload.fields([
+  { name: "profilePicture", maxCount: 1 },
+  { name: "bannerPicture", maxCount: 1 },
+]);
+router.post("/update/:token", cpUpload, async function (req, res, next) {
+  const sentData = JSON.parse(req.body.data);
+
+  const generalUpdate = {
+    firstname: sentData.firstname,
+    lastname: sentData.lastname,
+    birthday: new Date(sentData.birthday),
+    address: sentData.address,
+    description: sentData.description,
+    headline: sentData.headline,
+    experience: sentData.experience,
+    hasAcceptedToBeShown: sentData.hasAcceptedToBeShown,
+    currentJob: sentData.currentJob,
+    // urlLinkedIn: sentData.urlLinkedIn,
+  };
+
+  // Upload, add in update object then delete temp file pic
+  if (req.files.bannerPicture !== undefined) {
+    const bannerPath = await cloudinaryImageUploadMethod(
+      req.files.bannerPicture[0].path
+    );
+    generalUpdate.bannerPicture = bannerPath.res;
+    fs.unlinkSync(req.files.bannerPicture[0].path);
   }
-  
-  const productImages = urls.map( url => url.res );
-  const sentData = JSON.parse(req.body.data)
-  
+
+  // Upload, add in update object then delete temp file pic
+  if (req.files.profilePicture !== undefined) {
+    const profilePath = await cloudinaryImageUploadMethod(
+      req.files.profilePicture[0].path
+    );
+    generalUpdate.profilePicture = profilePath.res;
+    fs.unlinkSync(req.files.profilePicture[0].path);
+  }
+
   //permet de créer/éditer les infos generales de l'utilisateur
   //On cherche d'abord le user avec son token pour récuperer son id
   //puis on modifie via updateOne le document General associé au user id
   User.findOne({ token: req.params.token }).then((data) => {
-    console.log(productImages);
     if (data !== null) {
-      General.updateOne(
-        { user: data._id },
-        {
-          general: {
-            firstname:sentData.firstname,
-            lastname:sentData.lastname,
-            birthday: sentData.birthday,
-            address: sentData.address,
-            description: sentData.description,
-            headline: sentData.headline,
-            experience: sentData.experience,
-            // currentJob: sentData.currentJob,
-            profilePicture: productImages[1],
-            bannerPicture: productImages[0],
-            // urlLinkedIn: sentData.urlLinkedIn,
-          },
-        }
-      ).then(() =>
+      General.updateOne({ user: data._id }, generalUpdate).then(() =>
         res.json({
           result: true,
           res: "Votre profil a été mis à jour !",
