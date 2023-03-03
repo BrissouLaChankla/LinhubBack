@@ -27,8 +27,9 @@ router.post("/create/:token", (req, res) => {
     if (data !== null) {
       console.log(data);
       const id = data._id;
+
       const newSkill = new Skill({
-        name: req.body.name,
+        name: req.body.skills,
         user: id,
       });
 

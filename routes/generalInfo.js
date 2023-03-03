@@ -4,6 +4,7 @@ const General = require("../models/generals");
 const User = require("../models/users");
 const multer = require("multer");
 const fs = require("fs");
+const { updateOne } = require("../models/generals");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -104,6 +105,30 @@ router.post("/update/:token", cpUpload, async function (req, res, next) {
           res: "Votre profil a été mis à jour !",
         })
       );
+    }
+  });
+});
+
+//permet de créer les infos generales de l'utilisateur consernant son job actuel et son experience
+
+router.post("/setup/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    console.log(data);
+    if (data !== null) {
+      General.updateOne(
+        { user: data._id },
+        { currentJob: req.body.currentJob, experience: req.body.experience }
+      ).then((data) =>
+        res.json({
+          result: data,
+          res: "Votre profil a été mis à jour !",
+        })
+      );
+    } else {
+      res.json({
+        result: false,
+        res: "Une erreur est survenue",
+      });
     }
   });
 });
