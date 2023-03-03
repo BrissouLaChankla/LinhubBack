@@ -3,13 +3,14 @@ var router = express.Router();
 const General = require("../models/generals");
 const User = require("../models/users");
 const multer = require('multer');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname)
+    cb(null, Date.now()+file.originalname)
   }
 })
 const upload = multer({ storage: storage })
@@ -61,7 +62,6 @@ const cpUpload = upload.fields([{ name: 'profilePicture', maxCount: 1 }, { name:
 router.post('/update/:token', cpUpload, async function (req, res, next) {
   const sentData = JSON.parse(req.body.data)
 
-  console.log(req.body.data);
 
   const generalUpdate = {
     firstname: sentData.firstname,
@@ -76,14 +76,20 @@ router.post('/update/:token', cpUpload, async function (req, res, next) {
     // urlLinkedIn: sentData.urlLinkedIn,
   };
 
+
+  // Upload, add in update object then delete temp file pic
   if (req.files.bannerPicture !== undefined) {
     const bannerPath = await cloudinaryImageUploadMethod(req.files.bannerPicture[0].path);
     generalUpdate.bannerPicture = bannerPath.res;
-  }
+    fs.unlinkSync(req.files.bannerPicture[0].path);
 
+  }
+  
+  // Upload, add in update object then delete temp file pic
   if (req.files.profilePicture !== undefined) {
     const profilePath = await cloudinaryImageUploadMethod(req.files.profilePicture[0].path);
     generalUpdate.profilePicture = profilePath.res;
+    fs.unlinkSync(req.files.profilePicture[0].path);
   }
   
   
