@@ -7,6 +7,10 @@ const User = require("../models/users");
 const General = require("../models/generals");
 const Education = require("../models/educations");
 const Project = require("../models/projects");
+const Language = require("../models/languages");
+const Position = require("../models/positions");
+const Skill = require("../models/skills");
+const Website = require("../models/websites");
 
 /* GET users listing. */
 router.post("/signup", (req, res) => {
@@ -32,7 +36,7 @@ router.post("/signup", (req, res) => {
 
       newUser.save().then((newData) => {
         const newGeneral = new General({
-          user: newData._id
+          user: newData._id,
         });
         newGeneral.save();
         res.json({
@@ -93,9 +97,52 @@ router.delete("/delete/:token", (req, res) => {
             if (data.deletedCount >= 0) {
               Project.deleteMany({ user: userId }).then((data) => {
                 if (data.deletedCount >= 0) {
-                  User.deleteOne({ _id: userId }).then((data) => {
-                    if (data.deletedCount > 0) {
-                      res.json({ result: true, res: "User deleted" });
+                  Language.deleteMany({ user: userId }).then((data) => {
+                    if (data.deletedCount >= 0) {
+                      Skill.deleteMany({ user: userId }).then((data) => {
+                        if (data.deletedCount >= 0) {
+                          Position.deleteMany({ user: userId }).then((data) => {
+                            if (data.deletedCount >= 0) {
+                              Website.deleteMany({ user: userId }).then(
+                                (data) => {
+                                  if (data.deletedCount >= 0) {
+                                    User.deleteOne({ _id: userId }).then(
+                                      (data) => {
+                                        if (data.deletedCount > 0) {
+                                          res.json({
+                                            result: true,
+                                            res: "User deleted",
+                                          });
+                                        } else {
+                                          res.json({
+                                            result: false,
+                                            error: "an error was occured 8",
+                                          });
+                                        }
+                                      }
+                                    );
+                                  } else {
+                                    res.json({
+                                      result: false,
+                                      error: "an error was occured 7",
+                                    });
+                                  }
+                                }
+                              );
+                            } else {
+                              res.json({
+                                result: false,
+                                error: "an error was occured 6",
+                              });
+                            }
+                          });
+                        } else {
+                          res.json({
+                            result: false,
+                            error: "an error was occured 5",
+                          });
+                        }
+                      });
                     } else {
                       res.json({
                         result: false,

@@ -14,6 +14,7 @@ var projectRouter = require("./routes/projects");
 var languageRouter = require("./routes/languages");
 var positionRouter = require("./routes/positions");
 var skillRouter = require("./routes/skills");
+var websiteRouter = require("./routes/websites");
 
 var app = express();
 const cors = require("cors");
@@ -32,5 +33,6 @@ app.use("/projects", projectRouter);
 app.use("/languages", languageRouter);
 app.use("/positions", positionRouter);
 app.use("/skills", skillRouter);
+app.use("/websites", websiteRouter);
 
 module.exports = app;
