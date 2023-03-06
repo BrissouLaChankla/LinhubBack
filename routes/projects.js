@@ -52,6 +52,44 @@ router.post("/create/:token", (req, res) => {
   });
 });
 
+/* get a single project detailled */
+router.get("/:projectID/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      Project.findOne({ user: data._id, _id: req.params.projectID }).then(
+        (data) => {
+          console.log(data);
+          res.json({
+            result: true,
+            data: data,
+          });
+        }
+      );
+    } else {
+      res.json({ error: "An error occured" });
+    }
+  });
+});
+
+/* Update un projet */
+router.put("/:projectID/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      Project.updateOne({ _id: req.params.projectID }, req.body).then(
+        (data) => {
+          console.log(data);
+          res.json({
+            result: true,
+            data,
+          });
+        }
+      );
+    } else {
+      res.json({ error: "User not found" });
+    }
+  });
+});
+
 /* cette route aura comme params l'ID du document Project qu'on souhaite supprimer, on le supprimera
    ensuite avec .deleteOne()*/
 router.delete("/delete/:projectId", (req, res) => {
