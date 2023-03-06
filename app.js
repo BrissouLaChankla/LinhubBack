@@ -6,17 +6,18 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var generalInfoRouter = require("./routes/generalInfo");
-var educationRouter = require("./routes/education");
-var projectRouter = require("./routes/projects");
-var languageRouter = require("./routes/languages");
-var experienceRouter = require("./routes/experiences");
-var skillRouter = require("./routes/skills");
-var websiteRouter = require("./routes/websites");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const generalInfoRouter = require("./routes/generalInfo");
+const educationRouter = require("./routes/education");
+const projectRouter = require("./routes/projects");
+const languageRouter = require("./routes/languages");
+const experienceRouter = require("./routes/experiences");
+const skillRouter = require("./routes/skills");
+const websiteRouter = require("./routes/websites");
+const apiRouter = require("./routes/apis");
 
-var app = express();
+const app = express();
 const cors = require("cors");
 app.use(cors());
 app.use(logger("dev"));
@@ -34,5 +35,6 @@ app.use("/languages", languageRouter);
 app.use("/experiences", experienceRouter);
 app.use("/skills", skillRouter);
 app.use("/websites", websiteRouter);
+app.use("/apis", apiRouter);
 
 module.exports = app;

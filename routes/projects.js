@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const Project = require("../models/projects");
 const User = require("../models/users");
+const { checkBody } = require("../modules/checkBody");
 
 /*la route get permet de pouvoir afficher toutes les projets de l'utilisateur, elle reprends la même logique
 que pour les routes generalInfo: on recherche d'abord l'utilisateur avec son token mis en params dans
@@ -30,6 +31,16 @@ router.get("/:token", (req, res) => {
   ensuite on utilisera ce token pour rechercher l'utilisateur dans la bdd, si il est trouvé, on viendra créer un nouveau 
   document dans la collection educations avec la variable newEducation, on le sauvegarde ensuite*/
 router.post("/create/:token", (req, res) => {
+  if (
+    !checkBody(req.body, ["name", "description", "startDate", "endDate", "url"])
+  ) {
+    res.json({
+      result: false,
+      error: "Missing or empty fields",
+      erreur: "Champs manquant ou incorrect",
+    });
+    return;
+  }
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
       console.log(data);
