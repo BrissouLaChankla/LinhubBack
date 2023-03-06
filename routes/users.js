@@ -8,9 +8,10 @@ const General = require("../models/generals");
 const Education = require("../models/educations");
 const Project = require("../models/projects");
 const Language = require("../models/languages");
-const Position = require("../models/positions");
+const Experience = require("../models/experiences");
 const Skill = require("../models/skills");
 const Website = require("../models/websites");
+
 
 /* GET users listing. */
 router.post("/signup", (req, res) => {
@@ -38,6 +39,10 @@ router.post("/signup", (req, res) => {
         const newGeneral = new General({
           user: newData._id,
         });
+        const newApi = new Api({
+          user: newData._id,
+          api: 
+        })
         newGeneral.save();
         res.json({
           result: true,
@@ -101,7 +106,7 @@ router.delete("/delete/:token", (req, res) => {
                     if (data.deletedCount >= 0) {
                       Skill.deleteMany({ user: userId }).then((data) => {
                         if (data.deletedCount >= 0) {
-                          Position.deleteMany({ user: userId }).then((data) => {
+                          Experience.deleteMany({ user: userId }).then((data) => {
                             if (data.deletedCount >= 0) {
                               Website.deleteMany({ user: userId }).then(
                                 (data) => {

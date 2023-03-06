@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const positionSchema = mongoose.Schema({
+const experienceSchema = mongoose.Schema({
   company: String,
   description: String,
   location: String,
@@ -12,6 +12,6 @@ const positionSchema = mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
 });
 
-const Position = mongoose.model("positions", positionSchema);
+const Experience = mongoose.model("experiences", positionSchema);
 
-module.exports = Position;
+module.exports = Experience;

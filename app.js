@@ -12,7 +12,7 @@ var generalInfoRouter = require("./routes/generalInfo");
 var educationRouter = require("./routes/education");
 var projectRouter = require("./routes/projects");
 var languageRouter = require("./routes/languages");
-var positionRouter = require("./routes/positions");
+var experienceRouter = require("./routes/experiences");
 var skillRouter = require("./routes/skills");
 var websiteRouter = require("./routes/websites");
 
@@ -31,7 +31,7 @@ app.use("/generalInfo", generalInfoRouter);
 app.use("/education", educationRouter);
 app.use("/projects", projectRouter);
 app.use("/languages", languageRouter);
-app.use("/positions", positionRouter);
+app.use("/experiences", experienceRouter);
 app.use("/skills", skillRouter);
 app.use("/websites", websiteRouter);
 
