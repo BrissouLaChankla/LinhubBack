@@ -12,7 +12,6 @@ const Experience = require("../models/experiences");
 const Skill = require("../models/skills");
 const Website = require("../models/websites");
 
-
 /* GET users listing. */
 router.post("/signup", (req, res) => {
   if (!checkBody(req.body, ["firstname", "lastname", "email", "password"])) {
@@ -39,10 +38,6 @@ router.post("/signup", (req, res) => {
         const newGeneral = new General({
           user: newData._id,
         });
-        const newApi = new Api({
-          user: newData._id,
-          api: 
-        })
         newGeneral.save();
         res.json({
           result: true,
@@ -106,41 +101,43 @@ router.delete("/delete/:token", (req, res) => {
                     if (data.deletedCount >= 0) {
                       Skill.deleteMany({ user: userId }).then((data) => {
                         if (data.deletedCount >= 0) {
-                          Experience.deleteMany({ user: userId }).then((data) => {
-                            if (data.deletedCount >= 0) {
-                              Website.deleteMany({ user: userId }).then(
-                                (data) => {
-                                  if (data.deletedCount >= 0) {
-                                    User.deleteOne({ _id: userId }).then(
-                                      (data) => {
-                                        if (data.deletedCount > 0) {
-                                          res.json({
-                                            result: true,
-                                            res: "User deleted",
-                                          });
-                                        } else {
-                                          res.json({
-                                            result: false,
-                                            error: "an error was occured 8",
-                                          });
+                          Experience.deleteMany({ user: userId }).then(
+                            (data) => {
+                              if (data.deletedCount >= 0) {
+                                Website.deleteMany({ user: userId }).then(
+                                  (data) => {
+                                    if (data.deletedCount >= 0) {
+                                      User.deleteOne({ _id: userId }).then(
+                                        (data) => {
+                                          if (data.deletedCount > 0) {
+                                            res.json({
+                                              result: true,
+                                              res: "User deleted",
+                                            });
+                                          } else {
+                                            res.json({
+                                              result: false,
+                                              error: "an error was occured 8",
+                                            });
+                                          }
                                         }
-                                      }
-                                    );
-                                  } else {
-                                    res.json({
-                                      result: false,
-                                      error: "an error was occured 7",
-                                    });
+                                      );
+                                    } else {
+                                      res.json({
+                                        result: false,
+                                        error: "an error was occured 7",
+                                      });
+                                    }
                                   }
-                                }
-                              );
-                            } else {
-                              res.json({
-                                result: false,
-                                error: "an error was occured 6",
-                              });
+                                );
+                              } else {
+                                res.json({
+                                  result: false,
+                                  error: "an error was occured 6",
+                                });
+                              }
                             }
-                          });
+                          );
                         } else {
                           res.json({
                             result: false,

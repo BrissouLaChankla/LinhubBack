@@ -12,6 +12,6 @@ const experienceSchema = mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
 });
 
-const Experience = mongoose.model("experiences", positionSchema);
+const Experience = mongoose.model("experiences", experienceSchema);
 
 module.exports = Experience;
