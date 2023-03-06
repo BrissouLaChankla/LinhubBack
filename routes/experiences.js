@@ -22,6 +22,44 @@ router.get("/:token", (req, res) => {
   });
 });
 
+// get a single experience detailled
+router.get("/:experienceID/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      Experience.findOne({ user: data._id, _id: req.params.experienceID }).then(
+        (data) => {
+          console.log(data);
+          res.json({
+            result: true,
+            data: data,
+          });
+        }
+      );
+    } else {
+      res.json({ error: "An error occured" });
+    }
+  });
+});
+
+/* Update une experience */
+router.put("/:experienceID/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      Experience.updateOne({ _id: req.params.experienceID }, req.body).then(
+        (data) => {
+          console.log(data);
+          res.json({
+            result: true,
+            data,
+          });
+        }
+      );
+    } else {
+      res.json({ error: "User not found" });
+    }
+  });
+});
+
 router.post("/create/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
