@@ -52,6 +52,7 @@ router.post("/create/:token", (req, res) => {
   });
 });
 
+/* get a single project detailled */
 router.get("/:projectID/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
