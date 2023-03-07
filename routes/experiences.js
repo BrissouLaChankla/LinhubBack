@@ -2,7 +2,6 @@ var express = require("express");
 var router = express.Router();
 const Experience = require("../models/experiences");
 const User = require("../models/users");
-const { checkBody } = require("../modules/checkBody");
 
 router.get("/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
@@ -62,24 +61,6 @@ router.put("/:experienceID/:token", (req, res) => {
 });
 
 router.post("/create/:token", (req, res) => {
-  if (
-    !checkBody(req.body, [
-      "company",
-      "description",
-      "location",
-      "title",
-      "startMonthYear",
-      "endMonthYear",
-      "typeOfContract",
-    ])
-  ) {
-    res.json({
-      result: false,
-      error: "Missing or empty fields",
-      erreur: "Champs manquant ou incorrect",
-    });
-    return;
-  }
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
       console.log(data);
