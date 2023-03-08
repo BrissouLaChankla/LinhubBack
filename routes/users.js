@@ -86,6 +86,67 @@ router.post("/signin", (req, res) => {
   });
 });
 
+router.get("/completion/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      const userId = data._id;
+      let result = 0;
+      let noComplete = [];
+      Education.findOne({ user: userId }).then((data) => {
+        if (data !== null) {
+          result = result + 25;
+          // console.log(result);
+          // return result;
+        } else {
+          noComplete.push("education");
+          // console.log(noComplete);
+          // return noComplete;
+        }
+
+        Experience.findOne({ user: userId }).then((data) => {
+          if (data !== null) {
+            result += 25;
+            // console.log(result);
+          } else {
+            noComplete.push("Experience");
+            // console.log(noComplete);
+          }
+          Project.findOne({ user: userId }).then((data) => {
+            if (data !== null) {
+              result += 25;
+              // console.log(result);
+            } else {
+              noComplete.push("Project");
+              // console.log(noComplete);
+            }
+            General.findOne({ user: userId }).then((data) => {
+              if (data !== null) {
+                result += 25;
+                // console.log(result);
+              } else {
+                noComplete.push("Général");
+              }
+              // console.log(result);
+              // console.log({
+              //   result: true,
+              //   percent: result,
+              //   noComplete: noComplete,
+              // });
+              res.json({
+                result: true,
+                percent: result,
+                noComplete: noComplete,
+              });
+            });
+          });
+        });
+      });
+    } else {
+      res.json({ result: false, error: "user not found" });
+    }
+  });
+});
+
 router.delete("/delete/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
