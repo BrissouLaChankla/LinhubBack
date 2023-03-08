@@ -24,7 +24,8 @@ router.get("/:token", (req, res) => {
 });
 
 router.post("/create/:token", (req, res) => {
-  if (!checkBody(req.body, ["name", "profenciency"])) {
+  console.log(req.body);
+  if (!checkBody(req.body, ["name", "proficiency"])) {
     res.json({
       result: false,
       error: "Missing or empty fields",
@@ -38,7 +39,7 @@ router.post("/create/:token", (req, res) => {
       const id = data._id;
       const newLanguage = new Language({
         name: req.body.name,
-        proficiency: req.body.profenciency,
+        proficiency: req.body.proficiency,
         user: id,
       });
 
