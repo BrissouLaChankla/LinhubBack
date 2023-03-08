@@ -24,7 +24,7 @@ router.get("/:token", (req, res) => {
 });
 
 router.post("/create/:token", (req, res) => {
-  if (!checkBody(req.body, ["name", "label", "url"])) {
+  if (!checkBody(req.body, ["url"])) {
     res.json({
       result: false,
       error: "Missing or empty fields",
