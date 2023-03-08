@@ -10,11 +10,7 @@ const Skill = require("../models/skills");
 const Website = require("../models/websites");
 
 router.get("/:token", async (req, res) => {
-  const userData = await User.findOne({ token: req.params.token }).select([
-    "-password",
-    "-token",
-    "-_id",
-  ]);
+  const userData = await User.findOne({ token: req.params.token });
   const generalData = await General.findOne({ user: userData._id });
   const languageData = await Language.find({ user: userData._id });
   const projectData = await Project.find({ user: userData._id });
@@ -22,9 +18,14 @@ router.get("/:token", async (req, res) => {
   const skillData = await Skill.find({ user: userData._id });
   const websiteData = await Website.find({ user: userData._id });
   const experienceData = await Experience.find({ user: userData._id });
-
+  const userData1 = await User.findOne({ token: req.params.token }).select([
+    "-password",
+    "-token",
+    "-_id",
+  ]);
+  //doit etre ameliorer si possible
   res.json({
-    user: userData,
+    user: userData1,
     general: generalData,
     languages: languageData,
     projects: projectData,
