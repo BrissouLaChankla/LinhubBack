@@ -10,9 +10,11 @@ const Skill = require("../models/skills");
 const Website = require("../models/websites");
 
 router.get("/:token", async (req, res) => {
-  const userData = await User.findOne({ token: req.params.token }).select(
-    "-password"
-  );
+  const userData = await User.findOne({ token: req.params.token }).select([
+    "-password",
+    "-token",
+    "-_id",
+  ]);
   const generalData = await General.findOne({ user: userData._id });
   const languageData = await Language.find({ user: userData._id });
   const projectData = await Project.find({ user: userData._id });
