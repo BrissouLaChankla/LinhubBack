@@ -45,6 +45,23 @@ router.post("/create/:token", (req, res) => {
   });
 });
 
+router.post("/initiate/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      const id = data._id;
+      const newSkill = new Skill({
+        name: req.body.skills,
+        user: id,
+      });
+      newSkill.save().then((newData) => {
+        res.json({ result: true, data: newData });
+      });
+    } else {
+      res.json({ result: false });
+    }
+  });
+});
+
 router.post("/delete/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
