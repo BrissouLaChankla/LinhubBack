@@ -89,6 +89,8 @@ router.post("/signin", (req, res) => {
 router.get("/completion/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
+      const firstname = data.firstname;
+      const lastname = data.lastname;
       const userId = data._id;
       let result = 0;
       let noComplete = [];
@@ -98,7 +100,7 @@ router.get("/completion/:token", (req, res) => {
           // console.log(result);
           // return result;
         } else {
-          noComplete.push("education");
+          noComplete.push("Formations");
           // console.log(noComplete);
           // return noComplete;
         }
@@ -108,7 +110,7 @@ router.get("/completion/:token", (req, res) => {
             result += 25;
             // console.log(result);
           } else {
-            noComplete.push("Experience");
+            noComplete.push("Experiences");
             // console.log(noComplete);
           }
           Project.findOne({ user: userId }).then((data) => {
@@ -116,7 +118,7 @@ router.get("/completion/:token", (req, res) => {
               result += 25;
               // console.log(result);
             } else {
-              noComplete.push("Project");
+              noComplete.push("Projets");
               // console.log(noComplete);
             }
             General.findOne({ user: userId }).then((data) => {
@@ -136,6 +138,8 @@ router.get("/completion/:token", (req, res) => {
                 result: true,
                 percent: result,
                 noComplete: noComplete,
+                firstname: firstname,
+                lastname: lastname,
               });
             });
           });
