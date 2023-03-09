@@ -7,7 +7,7 @@ const experienceSchema = mongoose.Schema({
   locationString: String,
   title: String,
   startMonthYear: Date,
-  EndMonthYear: Date,
+  endMonthYear: Date,
   typeOfContract: String,
   user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
 });
