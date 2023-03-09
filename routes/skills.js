@@ -2,15 +2,14 @@ var express = require("express");
 var router = express.Router();
 const User = require("../models/users");
 const Skill = require("../models/skills");
+const { checkBody } = require("../modules/checkBody");
 
 router.get("/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
-      console.log(data._id);
       Skill.find({ user: data._id })
         // .populate("user")
         .then((data) => {
-          console.log(data);
           res.json({
             result: true,
             data: data,
@@ -23,16 +22,37 @@ router.get("/:token", (req, res) => {
 });
 
 router.post("/create/:token", (req, res) => {
+  if (!checkBody(req.body, ["skills"])) {
+    res.json({
+      result: false,
+      error: "Missing or empty fields",
+      erreur: "Champs manquant ou incorrect",
+    });
+    return;
+  }
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
-      console.log(data);
       const id = data._id;
+      Skill.updateOne({ user: id }, { $push: { name: req.body.skills } }).then(
+        (data) => {
+          console.log("data", data);
+          data.modifiedCount > 0 && res.json({ result: true });
+        }
+      );
+    } else {
+      res.json({ result: false });
+    }
+  });
+});
 
+router.post("/initiate/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      const id = data._id;
       const newSkill = new Skill({
         name: req.body.skills,
         user: id,
       });
-
       newSkill.save().then((newData) => {
         res.json({ result: true, data: newData });
       });
@@ -42,15 +62,20 @@ router.post("/create/:token", (req, res) => {
   });
 });
 
-router.delete("/delete/:skillId", (req, res) => {
-  Skill.deleteOne({ _id: req.params.skillId }).then((data) => {
-    console.log(typeof data.deletedCount);
-    if (data.deletedCount > 0) {
-      res.json({ result: true, text: "skill deleted" });
+router.post("/delete/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      const id = data._id;
+
+      Skill.updateOne(
+        { user: id },
+        { $pull: { name: req.body.skillname } }
+      ).then((data) => {
+        data.modifiedCount > 0 && res.json({ result: true });
+      });
     } else {
-      res.json({ result: false, error: "an error was accured" });
+      res.json({ result: false });
     }
-    // }data.deletedCount = '1'
   });
 });
 

@@ -30,6 +30,16 @@ router.get("/:token", (req, res) => {
   ensuite on utilisera ce token pour rechercher l'utilisateur dans la bdd, si il est trouvé, on viendra créer un nouveau 
   document dans la collection educations avec la variable newEducation, on le sauvegarde ensuite*/
 router.post("/create/:token", (req, res) => {
+  // if (
+  //   !checkBody(req.body, ["name", "description", "startDate", "endDate", "url"])
+  // ) {
+  //   res.json({
+  //     result: false,
+  //     error: "Missing or empty fields",
+  //     erreur: "Champs manquant ou incorrect",
+  //   });
+  //   return;
+  // }
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
       console.log(data);
@@ -48,6 +58,44 @@ router.post("/create/:token", (req, res) => {
       });
     } else {
       res.json({ result: false });
+    }
+  });
+});
+
+/* get a single project detailled */
+router.get("/:projectID/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      Project.findOne({ user: data._id, _id: req.params.projectID }).then(
+        (data) => {
+          console.log(data);
+          res.json({
+            result: true,
+            data: data,
+          });
+        }
+      );
+    } else {
+      res.json({ error: "An error occured" });
+    }
+  });
+});
+
+/* Update un projet */
+router.put("/:projectID/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      Project.updateOne({ _id: req.params.projectID }, req.body).then(
+        (data) => {
+          console.log(data);
+          res.json({
+            result: true,
+            data,
+          });
+        }
+      );
+    } else {
+      res.json({ error: "User not found" });
     }
   });
 });

@@ -8,7 +8,7 @@ const General = require("../models/generals");
 const Education = require("../models/educations");
 const Project = require("../models/projects");
 const Language = require("../models/languages");
-const Position = require("../models/positions");
+const Experience = require("../models/experiences");
 const Skill = require("../models/skills");
 const Website = require("../models/websites");
 
@@ -67,7 +67,7 @@ router.post("/signin", (req, res) => {
     return;
   }
 
-  User.findOne({ username: req.body.email }).then((data) => {
+  User.findOne({ email: req.body.email }).then((data) => {
     if (data && bcrypt.compareSync(req.body.password, data.password)) {
       res.json({
         result: true,
@@ -82,6 +82,71 @@ router.post("/signin", (req, res) => {
         error: "Email not found or wrong password",
         erreur: "Email non valide ou mot de pass éroné",
       });
+    }
+  });
+});
+
+router.get("/completion/:token", (req, res) => {
+  User.findOne({ token: req.params.token }).then((data) => {
+    if (data !== null) {
+      const firstname = data.firstname;
+      const lastname = data.lastname;
+      const userId = data._id;
+      let result = 0;
+      let noComplete = [];
+      Education.findOne({ user: userId }).then((data) => {
+        if (data !== null) {
+          result = result + 25;
+          // console.log(result);
+          // return result;
+        } else {
+          noComplete.push("Formations");
+          // console.log(noComplete);
+          // return noComplete;
+        }
+
+        Experience.findOne({ user: userId }).then((data) => {
+          if (data !== null) {
+            result += 25;
+            // console.log(result);
+          } else {
+            noComplete.push("Experiences");
+            // console.log(noComplete);
+          }
+          Project.findOne({ user: userId }).then((data) => {
+            if (data !== null) {
+              result += 25;
+              // console.log(result);
+            } else {
+              noComplete.push("Projets");
+              // console.log(noComplete);
+            }
+            General.findOne({ user: userId }).then((data) => {
+              if (data !== null) {
+                result += 25;
+                // console.log(result);
+              } else {
+                noComplete.push("Général");
+              }
+              // console.log(result);
+              // console.log({
+              //   result: true,
+              //   percent: result,
+              //   noComplete: noComplete,
+              // });
+              res.json({
+                result: true,
+                percent: result,
+                noComplete: noComplete,
+                firstname: firstname,
+                lastname: lastname,
+              });
+            });
+          });
+        });
+      });
+    } else {
+      res.json({ result: false, error: "user not found" });
     }
   });
 });
@@ -101,41 +166,43 @@ router.delete("/delete/:token", (req, res) => {
                     if (data.deletedCount >= 0) {
                       Skill.deleteMany({ user: userId }).then((data) => {
                         if (data.deletedCount >= 0) {
-                          Position.deleteMany({ user: userId }).then((data) => {
-                            if (data.deletedCount >= 0) {
-                              Website.deleteMany({ user: userId }).then(
-                                (data) => {
-                                  if (data.deletedCount >= 0) {
-                                    User.deleteOne({ _id: userId }).then(
-                                      (data) => {
-                                        if (data.deletedCount > 0) {
-                                          res.json({
-                                            result: true,
-                                            res: "User deleted",
-                                          });
-                                        } else {
-                                          res.json({
-                                            result: false,
-                                            error: "an error was occured 8",
-                                          });
+                          Experience.deleteMany({ user: userId }).then(
+                            (data) => {
+                              if (data.deletedCount >= 0) {
+                                Website.deleteMany({ user: userId }).then(
+                                  (data) => {
+                                    if (data.deletedCount >= 0) {
+                                      User.deleteOne({ _id: userId }).then(
+                                        (data) => {
+                                          if (data.deletedCount > 0) {
+                                            res.json({
+                                              result: true,
+                                              res: "User deleted",
+                                            });
+                                          } else {
+                                            res.json({
+                                              result: false,
+                                              error: "an error was occured 8",
+                                            });
+                                          }
                                         }
-                                      }
-                                    );
-                                  } else {
-                                    res.json({
-                                      result: false,
-                                      error: "an error was occured 7",
-                                    });
+                                      );
+                                    } else {
+                                      res.json({
+                                        result: false,
+                                        error: "an error was occured 7",
+                                      });
+                                    }
                                   }
-                                }
-                              );
-                            } else {
-                              res.json({
-                                result: false,
-                                error: "an error was occured 6",
-                              });
+                                );
+                              } else {
+                                res.json({
+                                  result: false,
+                                  error: "an error was occured 6",
+                                });
+                              }
                             }
-                          });
+                          );
                         } else {
                           res.json({
                             result: false,

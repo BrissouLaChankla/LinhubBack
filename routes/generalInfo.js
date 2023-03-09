@@ -2,9 +2,8 @@ var express = require("express");
 var router = express.Router();
 const General = require("../models/generals");
 const User = require("../models/users");
-const multer = require("multer");
-const fs = require("fs");
-const { updateOne } = require("../models/generals");
+const multer = require("multer"); //importer des fichiers
+const fs = require("fs"); //supprimer des fichiers
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

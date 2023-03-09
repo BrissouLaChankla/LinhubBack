@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const Language = require("../models/languages");
 const User = require("../models/users");
+const { checkBody } = require("../modules/checkBody");
 
 router.get("/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
@@ -23,13 +24,22 @@ router.get("/:token", (req, res) => {
 });
 
 router.post("/create/:token", (req, res) => {
+  console.log(req.body);
+  if (!checkBody(req.body, ["name", "proficiency"])) {
+    res.json({
+      result: false,
+      error: "Missing or empty fields",
+      erreur: "Champs manquant ou incorrect",
+    });
+    return;
+  }
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
       console.log(data);
       const id = data._id;
       const newLanguage = new Language({
         name: req.body.name,
-        proficiency: req.body.profenciency,
+        proficiency: req.body.proficiency,
         user: id,
       });
 

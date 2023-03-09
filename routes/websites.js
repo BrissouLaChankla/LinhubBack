@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const User = require("../models/users");
 const Website = require("../models/websites");
+const { checkBody } = require("../modules/checkBody");
 
 router.get("/:token", (req, res) => {
   User.findOne({ token: req.params.token }).then((data) => {
@@ -23,6 +24,14 @@ router.get("/:token", (req, res) => {
 });
 
 router.post("/create/:token", (req, res) => {
+  if (!checkBody(req.body, ["url"])) {
+    res.json({
+      result: false,
+      error: "Missing or empty fields",
+      erreur: "Champs manquant ou incorrect",
+    });
+    return;
+  }
   User.findOne({ token: req.params.token }).then((data) => {
     if (data !== null) {
       console.log(data);
